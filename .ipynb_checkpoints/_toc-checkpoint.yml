@@ -1,0 +1,26 @@
+# Table of contents
+# Learn more at https://jupyterbook.org/customize/toc.html
+
+format: jb-book
+root: introduction
+chapters:
+  - file: reconhecimento
+  - file: bayes
+  - file: classificadores-lineares
+    sections:
+        - file: perceptron
+        - file: estimativa
+        - file: svm
+        - file: multiclasse
+  - file: nao-linear
+    sections:
+        - file: kernel
+        - file: arvores
+  - file: combinacao
+    sections:
+        - file: votacao
+        - file: stacking
+        - file: floresta
+        - file: bagging
+        - file: boosting
+  - file: exemplos
