@@ -1,0 +1,680 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>2.4 Máquina de vetores de suporte (SVM) - versão linear &#8212; Introdução ao reconhecimento de Padrões</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'svm';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="2.5 Estratétegias Multiclasse" href="multiclasse.html" />
+    <link rel="prev" title="2.3 Estimativa baseada na soma dos erros quadráticos" href="estimativa.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="introduction.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logobg.png" class="logo__image only-light" alt="Introdução ao reconhecimento de Padrões - Home"/>
+    <script>document.write(`<img src="_static/logobg.png" class="logo__image only-dark" alt="Introdução ao reconhecimento de Padrões - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="introduction.html">
+                    Apresentação
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="reconhecimento.html">Introdução ao reconhecimento de padrões</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayes.html">Capítulo 1: Teoria da decisão de Bayes</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="classificadores-lineares.html">Capítulo 2: Classificadores lineares</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="perceptron.html">2.2 Perceptron</a></li>
+<li class="toctree-l2"><a class="reference internal" href="estimativa.html">2.3 Estimativa baseada na soma dos erros quadráticos</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">2.4 Máquina de vetores de suporte (SVM) - versão linear</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiclasse.html">2.5 Estratétegias Multiclasse</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="nao-linear.html">Capítulo 3: Classificadores não lineares</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="kernel.html">3.1 Máquinas de vetores de suporte e função kernel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arvores.html">3.2 Árvores de decisão</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="combinacao.html">Capítulo 4: Combinação de classificadores</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="votacao.html">4.1 Votação por maioria e soft voting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stacking.html">4.2 Stacking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floresta.html">4.3 Floresta Aleatória</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bagging.html">4.4 Bagging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boosting.html">4.5 Boosting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exemplos.html">Capítulo 5: Métodos de agrupamento</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fsvm.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/svm.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<label class="sidebar-toggle secondary-toggle btn btn-sm" for="__secondary"title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</label>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>2.4 Máquina de vetores de suporte (SVM) - versão linear</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formalizacao-baseada-em-padroes-linearmente-separaveis">2.4.1 Formalização baseada em padrões linearmente separáveis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formalizacao-baseada-em-padroes-nao-linearmente-separaveis">2.4.2 Formalização baseada em padrões não linearmente separáveis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#otimizacao-quadratica-parametros-e-o-custo-computacional">2.4.3 Otimização quadrática, parâmetros e o custo computacional</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <style>
+    legend {
+        font-size: 16px;
+    }
+    main {
+        text-align: justify;
+    }
+</style>
+<section class="tex2jax_ignore mathjax_ignore" id="maquina-de-vetores-de-suporte-svm-versao-linear">
+<h1>2.4 Máquina de vetores de suporte (SVM) - versão linear<a class="headerlink" href="#maquina-de-vetores-de-suporte-svm-versao-linear" title="Permalink to this heading">#</a></h1>
+<p>O algoritmo de Máquina de Vetores de Suporte (SVM - <span class="math notranslate nohighlight">\(\textit{Support Vector Machine}\)</span>), é um algoritmo de aprendizado supervisionado que pode ser usado para classificação ou regressão. Ele é um dos algoritmos mais populares de aprendizado de máquina e é usado em uma ampla variedade de aplicações, incluindo reconhecimento de imagens, classificação de texto e processamento de sinais.</p>
+<p>O SVM funciona encontrando um hiperplano no espaço de características que separa os dados de duas classes diferentes. O hiperplano é escolhido de forma a maximizar a margem entre os dados das duas classes. A margem é a distância entre o hiperplano e os pontos de dados mais próximos de cada classe.</p>
+<p>Para encontrar o hiperplano com a margem máxima, o algoritmo SVM usa um processo de otimização que minimiza uma função de custo. A função de custo é escolhida de forma a garantir que o hiperplano esteja suficientemente separado dos dados de cada classe.</p>
+<p>O SVM pode ser usado para classificar dados linearmente separáveis ou não linearmente separáveis. No caso de dados linearmente separáveis, o hiperplano pode ser encontrado diretamente usando um método de programação linear. No caso de dados não linearmente separáveis, o algoritmo SVM usa uma função kernel para transformar os dados para um espaço de características de maior dimensão, onde eles podem ser separados linearmente. A seguir, serão apresentadas as duas estratégias.</p>
+<section id="formalizacao-baseada-em-padroes-linearmente-separaveis">
+<h2>2.4.1 Formalização baseada em padrões linearmente separáveis<a class="headerlink" href="#formalizacao-baseada-em-padroes-linearmente-separaveis" title="Permalink to this heading">#</a></h2>
+<p>O método SVM consiste em definir uma função discriminante linear <span class="math notranslate nohighlight">\(g\)</span> capaz de classificar um conjunto de padrões linearmente separável <span class="math notranslate nohighlight">\(D=\{(\textbf{x}_{i},y_{i}):i=1,...,m\}\)</span> entre as classes <span class="math notranslate nohighlight">\(ω_{1}\)</span>, quando <span class="math notranslate nohighlight">\(y_{i}=+1\)</span>, e <span class="math notranslate nohighlight">\(w_{2}\)</span>, se <span class="math notranslate nohighlight">\(y_{i}=-1\)</span>. Além disso, a funções discriminante em questão busca pela maior margem de separação entre os exemplos deste par de classes.</p>
+<p>A função discriminante em questão, segundo o método SVM, corresponde ao hiperplano que distingue os exemplos de <span class="math notranslate nohighlight">\(D\)</span>. Sua expressão é equivalente à forma discutida na Equação 2.1 e exemplificada pelas discussões da Figura 2.1. Um simples detalhe de notação refere-se à troca de notação do termo <span class="math notranslate nohighlight">\(ω_{0}\)</span> por <span class="math notranslate nohighlight">\(b\)</span>, cujo significado não sofre alteração.</p>
+<p>A Figura 2.7 apresenta dois exemplos de hiperplanos, <span class="math notranslate nohighlight">\(g_{1}\)</span> e <span class="math notranslate nohighlight">\(g_{2}\)</span>. Embora ambos os hiperplanos sejam capazes de separar adequadamente os conjuntos de padrões <span class="math notranslate nohighlight">\(⋆\)</span> e <span class="math notranslate nohighlight">\(\circ\)</span>, o hiperplano <span class="math notranslate nohighlight">\(g_{1}\)</span> apresenta maior margem de separação. Assim, tal hiperplano possui maiores condições de manter a separabilidade entre as classes caso novos padrões sejam considerados, isto é, sua capacidade de generalização é maior em comparação a <span class="math notranslate nohighlight">\(g_{2}\)</span>.</p>
+<div align="center">
+<p><img alt="figura7" src="_images/figura27.png" /> <legend>Figura 2.7 - Padrões linearmente separáveis e hiperplanos capazes de efetuar a separação entre as classes. O hiperplano g2 em b) proporciona maior margem de separação.</legend> </div></p>
+<p>A determinação do hiperplano associado a maior margem de separação é baseada na simples relação de distância entre ponto e reta. A distância entre um padrão (ponto) <span class="math notranslate nohighlight">\(\textbf{x}_{i}\)</span> qualquer e o hiperplano de separação (reta) <span class="math notranslate nohighlight">\(g(\textbf{x})=0\)</span> é calculada por <span class="math notranslate nohighlight">\(\frac{|g(\textbf{x}_{i})|}{||\textbf{w}||}\)</span>. Reescalonando <span class="math notranslate nohighlight">\(\textbf{w}\)</span> de forma que dois padrões <span class="math notranslate nohighlight">\(\textbf{x}_{u} \in ω_{1}\)</span> e <span class="math notranslate nohighlight">\(\textbf{x}_{v} \in ω_{2}\)</span>, ambos contidos em <span class="math notranslate nohighlight">\(D\)</span> e caracterizados como os mais próximos de <span class="math notranslate nohighlight">\(g(\textbf{x})=0\)</span>, estejam distantes à uma unidade deste hiperplano, são obtidas as seguintes relações:</p>
+<div align="center">
+<p>(i) a margem de separação tem largura <span class="math notranslate nohighlight">\(\frac{1}{||\textbf{w}||}+\frac{1}{||\textbf{w}||}=\frac{2}{||\textbf{w}||}\)</span></p>
+<p>(ii) dado <span class="math notranslate nohighlight">\(\textbf{x}_{u} \in ω_{1}\)</span>, então <span class="math notranslate nohighlight">\(g(\textbf{w}_{u})= \textbf{w}^{T}\textbf{x}_{u}+b \geq +1\)</span></p>
+<p>(iiI) dado <span class="math notranslate nohighlight">\(\textbf{x}_{v} \in ω_{2}\)</span>, então <span class="math notranslate nohighlight">\(g(\textbf{w}_{v})= \textbf{w}^{T}\textbf{x}_{v}+b \leq -1\)</span> </div></p>
+<p>Baseado nessas relações, é modelado o seguinte problema de otimização, cuja solução leva aos parãmetros <span class="math notranslate nohighlight">\(\textbf{w}\)</span> e <span class="math notranslate nohighlight">\(b\)</span>, que proporcionam o hiperplano com máxima margem de separação:</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+\min_{\textbf{w},b} \frac{1}{2}\textbf{w}^{T}\textbf{w} \tag{2.11}
+\end{equation}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+sujeito \ a: y_{i}(\textbf{w}^{T}\textbf{x}_{i}+b)\geq 1, i=1,...,m
+\end{equation}\)</span>  </div></p>
+<p>A relação (i) é utilizada na definição da função objetivo de (2.11), uma vez que a minimização de <span class="math notranslate nohighlight">\(||w||\)</span> (reescrita na forma equivalente <span class="math notranslate nohighlight">\(\textbf{w}^{T}\textbf{w}\)</span>) torna máxima a margem de largura <span class="math notranslate nohighlight">\(\frac{2}{||\textbf{w}||}\)</span>. As relações (ii) e (iii), associados aos respectivos inidicadores de classe <span class="math notranslate nohighlight">\(y_{i}\)</span>, constituem a restrição do problema de otimização. Tal restrição obriga o sinal da função discriminante aplicada em <span class="math notranslate nohighlight">\(\textbf{x}_{i}\)</span>, isto é, <span class="math notranslate nohighlight">\(g(\textbf{x}_{i})= \textbf{w}^{T}\textbf{x}_{i}+b\)</span>, a ser concordante com o sinal do indicador <span class="math notranslate nohighlight">\(y_{i}\)</span>, resultando, assim em uma multiplicação igual ou superior a um.</p>
+<p>A Figura 2.8 ilustra as relações geométricas que o hiperplano de margem máxima deve respeitar. Cabe ressaltar que os padrões localizados nos limites das margem de separação (i.e., <span class="math notranslate nohighlight">\(g(\textbf{x}=\pm 1)\)</span>) são responsáveis por determinar o hiperplano ótimo. Esses padrões são denominados <span class="math notranslate nohighlight">\(\textbf{vetores de suporte}\)</span>.</p>
+<div align="center">
+<p><img alt="figura8" src="_images/figura28.png" /> <legend>Figura 2.8 - Representação do hiperplano de separação, vetores de suporte (circulados) e margem de separação.</legend> </div></p>
+<p>O problema de otimização que determina o hiperplano de margem máxima possui função objetivo convexa com restrições lineares, logo torna-se conveniente resolvê-lo com uso do Método dos <span class="math notranslate nohighlight">\(\textbf{Multiplicadores de Lagrange}\)</span>. Para isso, inicialmente deve ser construída a função lagrangeana, que consiste na soma da função objetivo do problema (3.11) com combinação linear formada pelas restrições deste problema multiplicadas por escalares não negativos <span class="math notranslate nohighlight">\(λ_{i}\)</span>, denominados multiplicadores de Lagrange. A seguinte expressão corresponde à forma primal da função lagrangeana do problema (3.11):</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+L_{p}(\textbf{w},b,λ) = \frac{1}{2}\textbf{w}^{T}\textbf{w} - \sum_{i=1}^{m} λ[y_{i}(\textbf{w}^{T}\textbf{x}_{i}+b)-1] \tag{2.12}
+\end{equation}\)</span> </div></p>
+<p>A solução do problema (2.11) é equivalente ao “ponto de sela” da função lagrangeana (2.12), a qual deve ser minimizada com relação a <span class="math notranslate nohighlight">\(\textbf{w}\)</span> e <span class="math notranslate nohighlight">\(b\)</span> e máximizada com relação a <span class="math notranslate nohighlight">\(λ_{i}\)</span>. Diante de sua característica convexa, o valor mínimo da função (3.12) com relação a <span class="math notranslate nohighlight">\(\textbf{w}\)</span> e <span class="math notranslate nohighlight">\(b\)</span> equivale ao ponto em que sua derivada, com relação a estes parâmetros, é nula. Por conseguinte, surgem as relações:</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+\frac{∂L_{p}(\textbf{w},b,λ)}{∂\textbf{w}}=0 ⇒ \textbf{w} = \sum_{i=1}^{m} λ_{i}y_{i}\textbf{x}_{i} \tag{2.13}
+\end{equation}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+\frac{∂L_{p}(\textbf{w},b,λ)}{∂b}=0 ⇒ \textbf{w} = \sum_{i=1}^{m} λ_{i}y_{i}=0\tag{2.14}
+\end{equation}\)</span> </div></p>
+<p>Substituindo as relações (3.13) e (3.14) na função lagrangeana (3.12), obtém-se como resultado a forma dual da função lagrangeana:</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+L_{D}(λ) = \sum_{i=1}^{m}λ-\frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m}λ_{i}λ_{j}y_{i}y_{j}\textbf{x}_{i}^{T}\textbf{x}_{j} \tag{2.15}
+\end{equation}\)</span> </div></p>
+<p>Com a eliminaçaõ de <span class="math notranslate nohighlight">\(\textbf{w}\)</span> e <span class="math notranslate nohighlight">\(b\)</span> nesta nova representação, a solução do problema (3.11) torna-se equivalente a resolução do seguinte problema de otimização:</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+\max_{\lambda}L_{D}(\lambda)
+\end{equation}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+sujeito \ a \left \{ \begin{matrix} \lambda_{i}\geq 0,i=1,...,m \\ \sum_{i=1}^{m} λ_{i}y_{i} = 0\end{matrix} \right.\tag{2.16}
+\end{equation}\)</span> </div></p>
+<p>Os multiplicadores de Lagrange obtidos com a resolução do problema (2.16) permitem o cálculo dos parâmetros que definem o hiperplano de margem máxima. O vetor <span class="math notranslate nohighlight">\(\textbf{w}\)</span> é definido através da relação (2.13), já o escalar <span class="math notranslate nohighlight">\(b\)</span> pode ser calculado com a substituição de <span class="math notranslate nohighlight">\(\textbf{w}\)</span> em <span class="math notranslate nohighlight">\(g(\textbf{x}_{i})\)</span>, sendo <span class="math notranslate nohighlight">\(\textbf{x}_{i}\)</span> um vetor suporte com <span class="math notranslate nohighlight">\(y_{i}=+1\)</span>, logo <span class="math notranslate nohighlight">\(\textbf{w}^{T}\textbf{x}_{i}+b=1\)</span>.</p>
+<p>Além de proporcionar maior simplicidade no cálculo dos parâmetros ótimos, a representação dual da função lagrangeana possui como fator o produto interno entre os padrões (i.e., <span class="math notranslate nohighlight">\(\textbf{x}_{i}^{T}\textbf{x}_{j}\)</span>), o que possibilita o uso de funções <span class="math notranslate nohighlight">\(\textbf{kernel}\)</span>, as quais serão discutidas nas seções seguintes.</p>
+<p>Em consequência ao hiperplano de margem máxima obtido, é definida a função discriminante <span class="math notranslate nohighlight">\(g(\textbf{x})=\textbf{w}^{T}\textbf{x}+b\)</span>, que classifica um dado padrão <span class="math notranslate nohighlight">\(\textbf{x}\)</span> de acordo com a seguinte regra:</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+g(\textbf{x})=\textbf{w}^{T}\textbf{x}+b \left \{ \begin{matrix} \geq 0 ⇒ \textbf{x} \in ω_{1} \\ &lt; 0 ⇒ \textbf{x} \in ω_{2} \end{matrix} \right. \tag{2.17}
+\end{equation}\)</span> </div></p>
+</section>
+<section id="formalizacao-baseada-em-padroes-nao-linearmente-separaveis">
+<h2>2.4.2 Formalização baseada em padrões não linearmente separáveis<a class="headerlink" href="#formalizacao-baseada-em-padroes-nao-linearmente-separaveis" title="Permalink to this heading">#</a></h2>
+<p>O desenvolvimento apresentado na seção anterior é fundamentamentado na suposição de padrões linearmente separáveis. No entante, é natural a existência de problemas envolvendo padrões que não são linearmente separáveis. A fim de contornar este tipo de problema, são inseridas variáveis de folga <span class="math notranslate nohighlight">\(\xi \geq 0\)</span> que tornam sempre verdadeiras as seguintes relações:</p>
+<div align="center">
+<p>(i) dado <span class="math notranslate nohighlight">\(\textbf{x}_{i} \in 𝜔_{1}\)</span>, então <span class="math notranslate nohighlight">\(g(\textbf{x}_{i})=\textbf{w}^{T}\textbf{x}+b\geq+1-\xi_{i}\)</span></p>
+<p>(ii) dado <span class="math notranslate nohighlight">\(\textbf{x}_{i} \in 𝜔_{2}\)</span>, então <span class="math notranslate nohighlight">\(g(\textbf{x}_{i})=\textbf{w}^{T}\textbf{x}+b\geq+1-\xi_{i}\)</span> </div></p>
+<p>Geometricamente, as variáveis de folga respresentam o deslocamento em que os padrões classificados erroneamente encontram-se do limite da margem de separação referente a sua respectiva classe, conforme ilustra a Figura 2.9.</p>
+<div align="center">
+<p><img alt="figura9" src="_images/figura29.png" /> <legend>Figura 2.9 -Representação do hiperplano de separação para padrões não linearmente separáveis.</legend> </div></p>
+<p>Com intuito de incorporar um custo adicional devido à não separabilidade dos padrões, é introduzido o termo <span class="math notranslate nohighlight">\(C\sum_{i=1}^{m} \xi_{i} \)</span> na função objetivo do problema (2.10). Esse termo é responsável por contabilizar e penalizar a ocorrência de classificações incorretas segundo o hiperplano de separação definido. Neste contexto, <span class="math notranslate nohighlight">\(C&gt;0\)</span> atua como  um parâmetro regulador. Assim, é proporcionada a seguinte reformulação sobre o problema (2.10):</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+\min_{\textbf{w},b} \frac{1}{2}\textbf{w}^{T}\textbf{w} + C\sum_{i=1}^{m} \xi_{i}
+\end{equation}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+sujeito \ a: \left\{\begin{matrix} y_{i}(\textbf{w}^{T}\textbf{x}_{i}+b)\geq 1-\xi_{i}, i=1,...,m \\ \xi_{i} &gt; ; \ i=1,...m \end{matrix}\right. \tag{2.18}
+\end{equation}\)</span></p>
+<p>Por sua vez, a função Lagrangeana na forma primal obtida a partir do problema (2.18) é exepressa por:</p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+L_{p}(\textbf{w},b,λ) = \frac{1}{2}\textbf{w}^{T}\textbf{w}+C\sum_{i=1}^{m} \xi_{i} - \sum_{i=1}^{m} λ_{i}[y_{i}(\textbf{w}^{T}\textbf{x}_{i}+b)-1+\xi_{i}] - \sum_{i=1}^{m} 𝜌_{i}\xi_{i} \tag{2.19}
+\end{equation}.\)</span> </div></p>
+<p>em que <span class="math notranslate nohighlight">\(𝜌\)</span> é multiplicador de Lagrange inserido para garantir a positividade das variáveis de folga <span class="math notranslate nohighlight">\(\xi\)</span>.</p>
+<p>Seguindo os mesmos procedimentos apresentados na subseção anterior para obtenção da forma dual da função lagrangeana, as derivadas da função (2.19) com relação a <span class="math notranslate nohighlight">\(\textbf{w}\)</span>, <span class="math notranslate nohighlight">\(b\)</span> e <span class="math notranslate nohighlight">\(\xi\)</span> devem ser nulas. O resultado dessas derivações em relação a <span class="math notranslate nohighlight">\(\textbf{w}\)</span> e <span class="math notranslate nohighlight">\(b\)</span> produz os mesmos resultados obtidos em (2.13) e (2.14). Já a derivação com relação a <span class="math notranslate nohighlight">\(\xi\)</span> fornece que:</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+\frac{\partial L_{P}(\textbf{w},b,λ),𝜌}{\partial \xi_{i}}=0 \tag{2.20}
+\end{equation}\)</span> </div></p>
+<p>logo, sendo <span class="math notranslate nohighlight">\(λ\)</span> e 𝜌 escalares reais estritamente positivos, concluímos que <span class="math notranslate nohighlight">\(0\leq λ_{i} \leq C\)</span>.</p>
+<p>Após as devidas substituições, a forma dual da função lagrangeana para o caso não separável torna-se idêntica à (2.15). Com isso, o problema de otimização formulado para o tratamento de padrões não linearmente separáveis difere do problema (2.16) apenas com relação às restrições, ou seja:</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+\max_{λ}\sum_{i=1}^{m} λ_{i} - \frac{1}{2}\sum_{i=1}^{m}\sum_{j=1}^{m} λ_{i}λ_{j}y_{i}y_{j}\textbf{x}_{i}^{T}\textbf{x}_{j}
+\end{equation}\)</span></p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+sujeito \ a:\left\{\begin{matrix} 0 \leq \lambda_{i} \leq C, i=1,...,m \\ \sum_{i=1}^{m} \lambda_{i}y_{i}=0 \end{matrix}\right. \tag{2.21}
+\end{equation}\)</span> </div></p>
+<p>Com a otimização do problema (3.21), a obtenção do parâmetro <span class="math notranslate nohighlight">\(\textbf{w}\)</span> decorre da mesma forma realizada para o caso linearmente separável. Já o cálculo de <span class="math notranslate nohighlight">\(b\)</span> é alcançado a partir da primeira restrição do problema (3.18), adotando qualquer vetor suporte cuja variável de folga seja nula.</p>
+<p>Com o intuito de visualizar o comportamento dos hiperplanos de separação determinados através do método SVM, a Figura 2.11 ilustra a aplicação deste método sobre dados linearmente separáveis e não linearmente separáveis. A respeito do caso envolvendo dados linearmente separáveis, é possível observar que a superfície de decisão, quando comparada aos métodos discutidos nas seções anteriores, encontra-se mais afastada dos exemplos de treinamento que ocupam a região de transição. Sua aplicação sobre dados não linearmente separáveis proporciona uma superfície de decisão similar às obtidas pelos métodos abordados anteriormente.</p>
+<div align="center">
+<p><img alt="figura10" src="_images/figura210.png" /> <legend>Figura 2.10 - Hiperplanos de separação obtidos pelo SVM diante de dados linearmente separáveis (esquerda) e não linearmente separáveis (direita).</legend> </div></p>
+<p>Por outro lado, diferentemente dos métodos discutidos nas seções anteriores, em especial devido tanto à dificuldade quanto à estruturação e resolução do problema dado pela Equação 2.21, não será realizada a implementação do método SVM. Neste caso, a implementação disponibilizada pela biblioteca Scikit-Learn é uma alternativa. Além de conter funções relacionadas ao método SVM, esta biblioteca inclui ainda funcionalidades que serão abordadas nos tópicos que seguem.</p>
+<p>O Código 2.4 exibe um conjunto de comandos que contemplam a instanciação do objeto que representa o classificador, seguido pleo seu treinamento e aplicação na predição do indicador de classe de um dado padrão. Na linha 16, durante a instanciação do objeto <span class="math notranslate nohighlight">\(g\)</span>, são observados os parâmetros <span class="math notranslate nohighlight">\(C\)</span> e <span class="math notranslate nohighlight">\(\mathbb{kernel}\)</span>, os quais se referem à penalidade (C) e ao tipo de função kernel adotada, neste caso, linear, implicando, assim, que o produto interno <span class="math notranslate nohighlight">\(\textbf{x}_{i}^{T}\textbf{x}_{j}\)</span>, presente na Equação 2.21 não seja substituído por uma outra forma alternativa.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Importação da &quot;Scikit-Learn&quot; das funções relacionadas ao SVM</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span>
+
+<span class="c1">#Obtenção de exemplos de treinamento (Dataset IRIS) (3 classes)</span>
+<span class="kn">from</span> <span class="nn">sklearn</span> <span class="kn">import</span> <span class="n">svm</span><span class="p">,</span> <span class="n">datasets</span>
+<span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span> <span class="c1">#Função que divide o conjunto de dados em treinamento e validação</span>
+<span class="n">iris</span> <span class="o">=</span> <span class="n">datasets</span><span class="o">.</span><span class="n">load_iris</span><span class="p">()</span>
+
+<span class="n">X</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># Selecionando apenas as duas primeiras características</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">iris</span><span class="o">.</span><span class="n">target</span>
+
+<span class="c1">#Divisão dos conjunto de treino e validação</span>
+<span class="n">X_train</span><span class="p">,</span><span class="n">X_test</span><span class="p">,</span><span class="n">Y_train</span><span class="p">,</span><span class="n">Y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">test_size</span> <span class="o">=</span> <span class="mf">0.33</span><span class="p">,</span><span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1">#Instanciação do classificador &quot;g&quot;</span>
+<span class="n">g</span> <span class="o">=</span> <span class="n">svm</span><span class="o">.</span><span class="n">SVC</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+
+<span class="c1">#Treinamento do modelo</span>
+<span class="n">g</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span><span class="n">Y_train</span><span class="p">)</span>
+
+<span class="c1">#Predição do indicador de classe</span>
+<span class="n">pred</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+
+<span class="c1">#Acurácia</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">acc</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pred</span> <span class="o">==</span> <span class="n">Y_test</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">acc</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A partir desse primeiro emprego da Scikit-Learn, vale destacar dois elementos que serão obsercados com muita frequência nos próximos usos desta biblioteca: a instanciação do método e a utilização das funções <span class="math notranslate nohighlight">\(\mathbb{fit}\)</span> e <span class="math notranslate nohighlight">\(\mathbb{predict}\)</span>. Na instanciaçã, é criado um objeto relativo ao método em questão. Por outro lado, ao passo que <span class="math notranslate nohighlight">\(\mathbb{fit}\)</span> efetua o treinamento do método, <span class="math notranslate nohighlight">\(\mathbb{predict}\)</span> atua na rotulação de padrões, ou seja, duas etapas elementares em um processo de classificação. A maioria dos métodos implementados na biblioteca Scikit-Learn estão munidos das funções <span class="math notranslate nohighlight">\(\mathbb{fit}\)</span> e <span class="math notranslate nohighlight">\(\mathbb{predict}\)</span>. Para uma verificação mais ampla a respeito da estrutura e das funções presentes nesta biblioteca, é sugerida a leitura do “guia do usuário”.</p>
+</section>
+<section id="otimizacao-quadratica-parametros-e-o-custo-computacional">
+<h2>2.4.3 Otimização quadrática, parâmetros e o custo computacional<a class="headerlink" href="#otimizacao-quadratica-parametros-e-o-custo-computacional" title="Permalink to this heading">#</a></h2>
+<p>O método SVM apresenta certas vantagens em relação a outros métodos, a citar, aqueles baseados na ideia do gradiente descenedente ou no ajuste de distribuições de probabilidade. Nestes exemplos, o aprendizado é sensível aos parâmetros de inicialização e pode conduzir a resultados subótimos (mínimos locais). Ao contrário, o processo de aprendizado do método SVM é realizado pela otimização de problemas quadráticos convexos, o que implica em soluções únicas e definidas explicas explicitamente.</p>
+<p>Uma fragilidade decorrente do problema de otimização associado ao SVM refere-se ao número de parcelas da função objetivo, que cresce quadraticamente em relação ao número de padrões de treinamento. Esta característica torna crítico seu aprendizado diante de grandes conjuntos de dados. Tal fato tem motivado, ao longo do anos, o desenvolvimento e aprimoramento de algoritmos capazes de otimizar o processo de aprendizado. Exemplos de algoritmos destinados a esse propósito são <span class="math notranslate nohighlight">\(\textit{Sequential Minimal Optimization}\)</span> (SMO), <span class="math notranslate nohighlight">\(SVM^{Light}\)</span>, <span class="math notranslate nohighlight">\(\textit{Chuncking}\)</span> e <span class="math notranslate nohighlight">\(LibSVM\)</span>.</p>
+<p>Outro fator que atua diretamente no custo computacional são os parâmetros adotados, sejam eles referentes à função <span class="math notranslate nohighlight">\(\mathbb{kernel}\)</span> ou à penalidade de erro (C). A adoção de parâmetros que minimizam o custo computacional pode prejudicar a capacidade de aprendizado e generalização do método, proporcionando, assim, resultado insatisfatórios.</p>
+<p>Dessa forma, podemos concluir que, embora o método de otimização seja um coadjuvante importante no custo computacional, a quantidade de informação utilizada no treinamento e os parâmetros adotados tornam-se decisivos no processo de aprendizado.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="estimativa.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">2.3 Estimativa baseada na soma dos erros quadráticos</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="multiclasse.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">2.5 Estratétegias Multiclasse</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formalizacao-baseada-em-padroes-linearmente-separaveis">2.4.1 Formalização baseada em padrões linearmente separáveis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formalizacao-baseada-em-padroes-nao-linearmente-separaveis">2.4.2 Formalização baseada em padrões não linearmente separáveis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#otimizacao-quadratica-parametros-e-o-custo-computacional">2.4.3 Otimização quadrática, parâmetros e o custo computacional</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Vitor Jorge
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

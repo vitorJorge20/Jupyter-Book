@@ -1,0 +1,568 @@
+
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>3.1 Máquinas de vetores de suporte e função kernel &#8212; Introdução ao reconhecimento de Padrões</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+
+  
+  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
+    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'kernel';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="3.2 Árvores de decisão" href="arvores.html" />
+    <link rel="prev" title="Capítulo 3: Classificadores não lineares" href="nao-linear.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <a class="skip-link" href="#main-content">Skip to main content</a>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>
+    Back to top
+  </button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__primary"
+          id="__primary"/>
+  <label class="overlay overlay-primary" for="__primary"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          name="__secondary"
+          id="__secondary"/>
+  <label class="overlay overlay-secondary" for="__secondary"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+  
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
+  
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+
+<a class="navbar-brand logo" href="introduction.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logobg.png" class="logo__image only-light" alt="Introdução ao reconhecimento de Padrões - Home"/>
+    <script>document.write(`<img src="_static/logobg.png" class="logo__image only-dark" alt="Introdução ao reconhecimento de Padrões - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="introduction.html">
+                    Apresentação
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="reconhecimento.html">Introdução ao reconhecimento de padrões</a></li>
+<li class="toctree-l1"><a class="reference internal" href="bayes.html">Capítulo 1: Teoria da decisão de Bayes</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="classificadores-lineares.html">Capítulo 2: Classificadores lineares</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="perceptron.html">2.2 Perceptron</a></li>
+<li class="toctree-l2"><a class="reference internal" href="estimativa.html">2.3 Estimativa baseada na soma dos erros quadráticos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="svm.html">2.4 Máquina de vetores de suporte (SVM) - versão linear</a></li>
+<li class="toctree-l2"><a class="reference internal" href="multiclasse.html">2.5 Estratétegias Multiclasse</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="nao-linear.html">Capítulo 3: Classificadores não lineares</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">3.1 Máquinas de vetores de suporte e função kernel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="arvores.html">3.2 Árvores de decisão</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="combinacao.html">Capítulo 4: Combinação de classificadores</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="votacao.html">4.1 Votação por maioria e soft voting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stacking.html">4.2 Stacking</a></li>
+<li class="toctree-l2"><a class="reference internal" href="floresta.html">4.3 Floresta Aleatória</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bagging.html">4.4 Bagging</a></li>
+<li class="toctree-l2"><a class="reference internal" href="boosting.html">4.5 Boosting</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="exemplos.html">Capítulo 5: Métodos de agrupamento</a></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</label></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2Fkernel.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/kernel.md" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.md</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
+    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>3.1 Máquinas de vetores de suporte e função kernel</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article" role="main">
+                  
+  <style>
+    legend {
+        font-size: 16px;
+    }
+    main {
+        text-align: justify;
+    }
+</style>
+<section class="tex2jax_ignore mathjax_ignore" id="maquinas-de-vetores-de-suporte-e-funcao-kernel">
+<h1>3.1 Máquinas de vetores de suporte e função kernel<a class="headerlink" href="#maquinas-de-vetores-de-suporte-e-funcao-kernel" title="Permalink to this heading">#</a></h1>
+<p>A formulação exposta na Seção 2.4 apresenta como são obtidos os hiperplanos de separação através do método SVM. No entanto, conforme já discutido e justificado, existem problemas nos quais o uso de hiperplanos não proporciona uma separação adequada/razoável. Como alternativa, é possível remapear os padrões que não são linearmente separáveis no espaço de atributos original para outro espaço, denominado espaço característico, onde a separabilidade pode ser maior. Na Figura 3.2 b), é ilustrado um exemplo fictício de mapeamento dos padrões apresentados na Figura 3.2 a), possibilitando, assim, a separação linear.</p>
+<div align="center"> 
+<p><img alt="figura32" src="_images/figura32.png" /> <legend>Figura 3.2 - Exemplo de mapeamento dos padrões para um espaço de maior dimensão que proporciona separação linear.</legend> </div></p>
+<p>O processo de mapeamento exemplificado na Figura 3.2 pode ser conduzido implicitamente nas formulações apresentadas nas seções 2.4.1 e 2.4.2. Para tal, basta substituir os produtos internos <span class="math notranslate nohighlight">\(\textbf{w}^{T}\textbf{x}^{i}\)</span> e <span class="math notranslate nohighlight">\(\textbf{w}^{T}\textbf{x}_{i}^{T}\textbf{x}_{j}\)</span> presentes na regra de decisão (2.17) e na função objetivo (2.21) do método por uma função <span class="math notranslate nohighlight">\(K(\cdot,\cdot)\)</span> que respeite as condições do <span class="math notranslate nohighlight">\(\textit{Teorema de Mercer}\)</span>:</p>
+<p><span class="math notranslate nohighlight">\(\textbf{Teorema de Mercer}\)</span>: seja <span class="math notranslate nohighlight">\(\textbf{u}\)</span>,<span class="math notranslate nohighlight">\(\textbf{v}\)</span> <span class="math notranslate nohighlight">\(\in \mathcal{X} \subseteq \mathbb{R}^{n}\)</span> e <span class="math notranslate nohighlight">\(\phi(\cdot)\)</span> um mapeamento <span class="math notranslate nohighlight">\(\textbf{u}→\phi(\textbf{u})\in \mathcal{H}\)</span> sendo <span class="math notranslate nohighlight">\(\mathcal{H}\)</span> um espaço de Hilbert. O produto interno <span class="math notranslate nohighlight">\(\phi(\textbf{u})^{T}\phi(\textbf{v})\)</span> é equivalente à função contínua e simétrica <span class="math notranslate nohighlight">\(K(\textbf{u},\textbf{v})\)</span> que satisfaz:</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+\int_{\mathcal{X}}\int_{\mathcal{X}}K(\textbf{u},\textbf{v})h(\textbf{u})d\textbf{u}d\textbf{v} \ \geq 0 \tag{3.1}
+\end{equation}\)</span></p>
+<p>para qualquer <span class="math notranslate nohighlight">\(h(\textbf{u})\)</span>, tal que:</p>
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+\int_{\mathcal{X}}h(\textbf{u})^{2}d\textbf{u}&lt;+∞ \tag{3.2}
+\end{equation}\)</span> </div></p>
+<p>Como consequência deste teorema, para qualquer função <span class="math notranslate nohighlight">\(K(\cdot,\cdot)\)</span> que satisfaça as condições 3.1 e 3.2, é possível afirmar que existe um espaço vetorial onde tal função define um produto interno. Essas funções são denominads <span class="math notranslate nohighlight">\(\textbf{funções kernel}\)</span>.</p>
+<p>Embora o Teorema de Mercer forneça condições necessárias para construção de funções que definem o produto interno em algum espaço vetorial, não são fornecidos meios para definir qual é este espaço, ou seja, não é fornecida uma maneira direta de definir  <span class="math notranslate nohighlight">\(\phi(\cdot,\cdot)\)</span> a partir de <span class="math notranslate nohighlight">\(K(\cdot,\cdot)\)</span>. Além disso, verificar que uma dada função <span class="math notranslate nohighlight">\(K(\cdot,\cdot)\)</span> atende às condições do Teorema de Mercer pode não ser trivial.</p>
+<p>Alguns exemplos de funções kernel frequentemente adotadas na resolução de problemas gerais são as funções de Base Radial (<span class="math notranslate nohighlight">\(\textit{Radial Basis Function}\)</span> - RBF), Polinomial e Sigmoide, apresentadas respectivamente nas Equações 3.3, 3.4 e 3.5. O produto interno ente os vetores do espaço de atributos é denominado por função kernel Linear, apresentado na Equação 3.6.</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+K_{RBF}(\textbf{x}_{i},\textbf{x}_{j}) = \mathcal{e}^{-γ||\textbf{x}_{i}-\textbf{x}_{j}||^{2}} \tag{3.3}
+\end{equation}\)</span>
+<br />
+<span class="math notranslate nohighlight">\(\begin{equation}
+K_{Pol}(\textbf{x}_{i},\textbf{x}_{j}) = (\gamma \textbf{x}_{i}^{T}\textbf{x}_{j} + α)^{q} \tag{3.4}
+\end{equation}\)</span>
+<br />
+<span class="math notranslate nohighlight">\(\begin{equation}
+K_{Sigm}(\textbf{x}_{i},\textbf{x}_{j}) = (\gamma \textbf{x}_{i}^{T}\textbf{x}_{j} + α) \tag{3.4}
+\end{equation}\)</span>
+<br />
+<span class="math notranslate nohighlight">\(\begin{equation}
+K_{Linear}(\textbf{x}_{i},\textbf{x}_{j}) = \textbf{x}_{i}^{T}\textbf{x}_{j} \tag{3.5}
+\end{equation}\)</span> </div></p>
+<p>em que <span class="math notranslate nohighlight">\(q \in \mathbb{R}^{*}_{+}\)</span> e <span class="math notranslate nohighlight">\(\gamma\)</span>,<span class="math notranslate nohighlight">\(\alpha \in \mathbb{R}^{*}_{+}\)</span> são parâmetros associados.</p>
+<p>As funções kernel possuem ainda propriedades úteis na definição de novos kernels. Algumas destas propriedades são:</p>
+<p><span class="math notranslate nohighlight">\(\cdot\)</span> Combinação entre kernels: sejam <span class="math notranslate nohighlight">\(K_{1}\)</span> e <span class="math notranslate nohighlight">\(K_{2}\)</span> duas funções kernel, então qualquer combinação linear <span class="math notranslate nohighlight">\(v_{1}K_{1} + v_{2}K_{2}\)</span>, em que <span class="math notranslate nohighlight">\(v_{1},v_{2}\geq 0\)</span>, é uma função kernel;</p>
+<p><span class="math notranslate nohighlight">\(\cdot\)</span> Produto de Schur: sejam <span class="math notranslate nohighlight">\(K_{1}\)</span> e <span class="math notranslate nohighlight">\(K_{2}\)</span> duas funções kernel, então <span class="math notranslate nohighlight">\(K_{1}\cdot K_{2}\)</span> é uma função kernel;</p>
+<p><span class="math notranslate nohighlight">\(\cdot\)</span> Multiplicação por escalar: seja <span class="math notranslate nohighlight">\(K_{1}\)</span> uma função kernel e <span class="math notranslate nohighlight">\(v \ in mathbb{R}^{+}\)</span>, então <span class="math notranslate nohighlight">\(vK_{1}\)</span> é uma função kernel;</p>
+<p><span class="math notranslate nohighlight">\(\cdot\)</span> Multiplicação entre funções: sejam <span class="math notranslate nohighlight">\(h_{1}\)</span> e <span class="math notranslate nohighlight">\(h_{2}\)</span> duas funções reais, definidas no espaço de atributos <span class="math notranslate nohighlight">\(\mathcal{X} ⊂ \mathbb{R}^{n}\)</span>, então <span class="math notranslate nohighlight">\(h_{1}\cdot h_{2}\)</span> é uma função kernel.</p>
+<p>Existem ainda formas alternativas de construir as funções kernel a partir de resultados já apresentados na literatura, como utilizando o modelo de funções kernel de base radial, definidos por:</p>
+<div align="center">
+<p><span class="math notranslate nohighlight">\(\begin{equation}
+K(\textbf{x}_{i},\textbf{x}_{j}) = f(m(\textbf{x}_{i},\textbf{x}_{j})) \tag{3.6}
+\end{equation}\)</span> </div></p>
+<p>em que <span class="math notranslate nohighlight">\(m: \ \mathcal{X} \times \mathcal{X} → \mathbb{R}_{+}\)</span> é uma métrica e <span class="math notranslate nohighlight">\(f: \mathbb{R} → \mathbb{R}\)</span> é uma função contínua estritamente positiva, como a função exponencial <span class="math notranslate nohighlight">\(f(x) = \mathcal{e}^{-x}\)</span>.</p>
+<p>Para fins de exemplificação, o método SVM é aplicado sobre um problema multicalsse usando as funções kernel RBF, Polinomial e Sigmoide. Os resultados são apresentados na Figura 3.3.</p>
+<div align="center"> 
+<p><img alt="figura33" src="_images/figura33.png" /> <legend>Figura 3.3 - Superfícies de decisão obtidos pelo classificador SVM utilizando diferentes funções kernel e parametrizações.</legend> </div></p>
+<p>Quando feito o uso do kernel Polinomial com parâmetros <span class="math notranslate nohighlight">\(q=1\)</span>, <span class="math notranslate nohighlight">\(\gamma = 1\)</span> e <span class="math notranslate nohighlight">\(\alpha = 0\)</span>, ele é reduzido ao kernel linear, o que também reduz o método SVM à sua versão linear (Seção 2.4.2). Uma maior flexibilização da superfície de decisão é alcançada com o aumento do parâmetro <span class="math notranslate nohighlight">\(q\)</span>, relacionado ao grau do polinômio implícito que mapeia os dados para um novo espaço de dimensão superior. Em relação ao kernel RBF, o aumento de <span class="math notranslate nohighlight">\(\gamma\)</span> também proporciona superfícies de decisão ajustadas de características e particularidades dos dados. por outro lado, quando utilizado o kernel Sigmoide, o aumento de <span class="math notranslate nohighlight">\(\gamma\)</span> implica em superfícies de decisão com maior tendência linear.</p>
+<p>Em relação ao emprego da biblioteca Scikit-Learn para aplicação do método SVM com uso das funções kernel discutidas, é suficiente que sejam declarados os parâmetros que estabelecem o kernel desejado e suas respectivas parametrizações. A opção <span class="math notranslate nohighlight">\(\textbf{kernel='poly'}\)</span>, <span class="math notranslate nohighlight">\(\textbf{'rbf'}\)</span> ou <span class="math notranslate nohighlight">\(\textbf{'sigmoid'}\)</span> determina a função kernel a ser empregada entre as formas Polinomial, RBF e Sigmoide, respectivamente. Em relação aos parâmetros <span class="math notranslate nohighlight">\(q\)</span>, <span class="math notranslate nohighlight">\(\gamma\)</span> e <span class="math notranslate nohighlight">\(\alpha\)</span>, eles são determinados através de <span class="math notranslate nohighlight">\(\textbf{degree}\)</span>, <span class="math notranslate nohighlight">\(\textbf{\gamma}\)</span> e <span class="math notranslate nohighlight">\(\textbf{coef0}\)</span>. No código 3.1, estão exemplificadas as instanciações de classificadores SVM com o uso da funções kernel discutidas e os parâmetros associados.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1">#Código 3.1 - Diferentes instanciações do classificador SVM com uso de funções kernel</span>
+
+<span class="n">g1</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;poly&#39;</span><span class="p">,</span><span class="n">degree</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">coef0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">gamma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">decision_function_shape</span><span class="o">=</span><span class="s1">&#39;ovr&#39;</span><span class="p">)</span>
+
+<span class="n">g1</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;rbf&#39;</span><span class="p">,</span> <span class="n">coef0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">decision_function_shape</span><span class="o">=</span><span class="s1">&#39;ovr&#39;</span><span class="p">)</span>
+
+<span class="n">g1</span> <span class="o">=</span> <span class="n">SVC</span><span class="p">(</span><span class="n">C</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="s1">&#39;sigmoid&#39;</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span><span class="n">coef0</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">decision_function_shape</span><span class="o">=</span><span class="s1">&#39;ovr&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="nao-linear.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Capítulo 3: Classificadores não lineares</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="arvores.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">3.2 Árvores de decisão</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Vitor Jorge
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2022.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
