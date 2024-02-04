@@ -1,3 +1,12 @@
+<style>
+    legend {
+        font-size: 16px;
+    }
+    main {
+        text-align: justify;
+    }
+</style>
+
 # Apresentação
 
 Este conjunto de Jupyter Book reúne, de forma simplificada, conceitos de classificação utilizados comumente em aprendizado de máquina. Os capítulos contém, de forma resumida, trechos do livro "Reconhecimento de Padrões - Um estudo dirigido", do autor Rogério Galante Negri.

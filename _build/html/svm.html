@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="./" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>2.4 Máquina de vetores de suporte (SVM) - versão linear &#8212; Introdução ao reconhecimento de Padrões</title>
   
@@ -19,49 +18,53 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
-    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
-    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/design-style.4045f2051d55cab465a707391d5b2007.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
-  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-    <script src="_static/jquery.js"></script>
-    <script src="_static/underscore.js"></script>
-    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="_static/doctools.js"></script>
-    <script src="_static/clipboard.min.js"></script>
-    <script src="_static/copybutton.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
     <script>let toggleHintShow = 'Click to show';</script>
     <script>let toggleHintHide = 'Click to hide';</script>
     <script>let toggleOpenOnPrint = 'true';</script>
-    <script src="_static/togglebutton.js"></script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
-    <script src="_static/design-tabs.js"></script>
+    <script src="_static/design-tabs.js?v=36754332"></script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
 const thebe_selector = ".thebe,.cell"
 const thebe_selector_input = "pre"
 const thebe_selector_output = ".output, .cell_output"
 </script>
-    <script async="async" src="_static/sphinx-thebe.js"></script>
+    <script async="async" src="_static/sphinx-thebe.js?v=afe5de03"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"
+const thebe_selector = ".thebe,.cell"
+const thebe_selector_input = "pre"
+const thebe_selector_output = ".output, .cell_output"
+</script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'svm';</script>
@@ -78,10 +81,9 @@ const thebe_selector_output = ".output, .cell_output"
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -122,11 +124,14 @@ const thebe_selector_output = ".output, .cell_output"
 </form></div>
   </div>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-    </nav>
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
   
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -160,7 +165,18 @@ const thebe_selector_output = ".output, .cell_output"
   
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
         <ul class="nav bd-sidenav bd-sidenav__home-link">
@@ -171,7 +187,6 @@ const thebe_selector_output = ".output, .cell_output"
             </li>
         </ul>
         <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="reconhecimento.html">Introdução ao reconhecimento de padrões</a></li>
 <li class="toctree-l1"><a class="reference internal" href="bayes.html">Capítulo 1: Teoria da decisão de Bayes</a></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="classificadores-lineares.html">Capítulo 2: Classificadores lineares</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="perceptron.html">2.2 Perceptron</a></li>
@@ -401,7 +416,7 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
   <style>
     legend {
@@ -412,13 +427,13 @@ document.write(`
     }
 </style>
 <section class="tex2jax_ignore mathjax_ignore" id="maquina-de-vetores-de-suporte-svm-versao-linear">
-<h1>2.4 Máquina de vetores de suporte (SVM) - versão linear<a class="headerlink" href="#maquina-de-vetores-de-suporte-svm-versao-linear" title="Permalink to this heading">#</a></h1>
+<h1>2.4 Máquina de vetores de suporte (SVM) - versão linear<a class="headerlink" href="#maquina-de-vetores-de-suporte-svm-versao-linear" title="Link to this heading">#</a></h1>
 <p>O algoritmo de Máquina de Vetores de Suporte (SVM - <span class="math notranslate nohighlight">\(\textit{Support Vector Machine}\)</span>), é um algoritmo de aprendizado supervisionado que pode ser usado para classificação ou regressão. Ele é um dos algoritmos mais populares de aprendizado de máquina e é usado em uma ampla variedade de aplicações, incluindo reconhecimento de imagens, classificação de texto e processamento de sinais.</p>
 <p>O SVM funciona encontrando um hiperplano no espaço de características que separa os dados de duas classes diferentes. O hiperplano é escolhido de forma a maximizar a margem entre os dados das duas classes. A margem é a distância entre o hiperplano e os pontos de dados mais próximos de cada classe.</p>
 <p>Para encontrar o hiperplano com a margem máxima, o algoritmo SVM usa um processo de otimização que minimiza uma função de custo. A função de custo é escolhida de forma a garantir que o hiperplano esteja suficientemente separado dos dados de cada classe.</p>
 <p>O SVM pode ser usado para classificar dados linearmente separáveis ou não linearmente separáveis. No caso de dados linearmente separáveis, o hiperplano pode ser encontrado diretamente usando um método de programação linear. No caso de dados não linearmente separáveis, o algoritmo SVM usa uma função kernel para transformar os dados para um espaço de características de maior dimensão, onde eles podem ser separados linearmente. A seguir, serão apresentadas as duas estratégias.</p>
 <section id="formalizacao-baseada-em-padroes-linearmente-separaveis">
-<h2>2.4.1 Formalização baseada em padrões linearmente separáveis<a class="headerlink" href="#formalizacao-baseada-em-padroes-linearmente-separaveis" title="Permalink to this heading">#</a></h2>
+<h2>2.4.1 Formalização baseada em padrões linearmente separáveis<a class="headerlink" href="#formalizacao-baseada-em-padroes-linearmente-separaveis" title="Link to this heading">#</a></h2>
 <p>O método SVM consiste em definir uma função discriminante linear <span class="math notranslate nohighlight">\(g\)</span> capaz de classificar um conjunto de padrões linearmente separável <span class="math notranslate nohighlight">\(D=\{(\textbf{x}_{i},y_{i}):i=1,...,m\}\)</span> entre as classes <span class="math notranslate nohighlight">\(ω_{1}\)</span>, quando <span class="math notranslate nohighlight">\(y_{i}=+1\)</span>, e <span class="math notranslate nohighlight">\(w_{2}\)</span>, se <span class="math notranslate nohighlight">\(y_{i}=-1\)</span>. Além disso, a funções discriminante em questão busca pela maior margem de separação entre os exemplos deste par de classes.</p>
 <p>A função discriminante em questão, segundo o método SVM, corresponde ao hiperplano que distingue os exemplos de <span class="math notranslate nohighlight">\(D\)</span>. Sua expressão é equivalente à forma discutida na Equação 2.1 e exemplificada pelas discussões da Figura 2.1. Um simples detalhe de notação refere-se à troca de notação do termo <span class="math notranslate nohighlight">\(ω_{0}\)</span> por <span class="math notranslate nohighlight">\(b\)</span>, cujo significado não sofre alteração.</p>
 <p>A Figura 2.7 apresenta dois exemplos de hiperplanos, <span class="math notranslate nohighlight">\(g_{1}\)</span> e <span class="math notranslate nohighlight">\(g_{2}\)</span>. Embora ambos os hiperplanos sejam capazes de separar adequadamente os conjuntos de padrões <span class="math notranslate nohighlight">\(⋆\)</span> e <span class="math notranslate nohighlight">\(\circ\)</span>, o hiperplano <span class="math notranslate nohighlight">\(g_{1}\)</span> apresenta maior margem de separação. Assim, tal hiperplano possui maiores condições de manter a separabilidade entre as classes caso novos padrões sejam considerados, isto é, sua capacidade de generalização é maior em comparação a <span class="math notranslate nohighlight">\(g_{2}\)</span>.</p>
@@ -476,7 +491,7 @@ g(\textbf{x})=\textbf{w}^{T}\textbf{x}+b \left \{ \begin{matrix} \geq 0 ⇒ \tex
 \end{equation}\)</span> </div></p>
 </section>
 <section id="formalizacao-baseada-em-padroes-nao-linearmente-separaveis">
-<h2>2.4.2 Formalização baseada em padrões não linearmente separáveis<a class="headerlink" href="#formalizacao-baseada-em-padroes-nao-linearmente-separaveis" title="Permalink to this heading">#</a></h2>
+<h2>2.4.2 Formalização baseada em padrões não linearmente separáveis<a class="headerlink" href="#formalizacao-baseada-em-padroes-nao-linearmente-separaveis" title="Link to this heading">#</a></h2>
 <p>O desenvolvimento apresentado na seção anterior é fundamentamentado na suposição de padrões linearmente separáveis. No entante, é natural a existência de problemas envolvendo padrões que não são linearmente separáveis. A fim de contornar este tipo de problema, são inseridas variáveis de folga <span class="math notranslate nohighlight">\(\xi \geq 0\)</span> que tornam sempre verdadeiras as seguintes relações:</p>
 <div align="center">
 <p>(i) dado <span class="math notranslate nohighlight">\(\textbf{x}_{i} \in 𝜔_{1}\)</span>, então <span class="math notranslate nohighlight">\(g(\textbf{x}_{i})=\textbf{w}^{T}\textbf{x}+b\geq+1-\xi_{i}\)</span></p>
@@ -549,7 +564,7 @@ sujeito \ a:\left\{\begin{matrix} 0 \leq \lambda_{i} \leq C, i=1,...,m \\ \sum_{
 <p>A partir desse primeiro emprego da Scikit-Learn, vale destacar dois elementos que serão obsercados com muita frequência nos próximos usos desta biblioteca: a instanciação do método e a utilização das funções <span class="math notranslate nohighlight">\(\mathbb{fit}\)</span> e <span class="math notranslate nohighlight">\(\mathbb{predict}\)</span>. Na instanciaçã, é criado um objeto relativo ao método em questão. Por outro lado, ao passo que <span class="math notranslate nohighlight">\(\mathbb{fit}\)</span> efetua o treinamento do método, <span class="math notranslate nohighlight">\(\mathbb{predict}\)</span> atua na rotulação de padrões, ou seja, duas etapas elementares em um processo de classificação. A maioria dos métodos implementados na biblioteca Scikit-Learn estão munidos das funções <span class="math notranslate nohighlight">\(\mathbb{fit}\)</span> e <span class="math notranslate nohighlight">\(\mathbb{predict}\)</span>. Para uma verificação mais ampla a respeito da estrutura e das funções presentes nesta biblioteca, é sugerida a leitura do “guia do usuário”.</p>
 </section>
 <section id="otimizacao-quadratica-parametros-e-o-custo-computacional">
-<h2>2.4.3 Otimização quadrática, parâmetros e o custo computacional<a class="headerlink" href="#otimizacao-quadratica-parametros-e-o-custo-computacional" title="Permalink to this heading">#</a></h2>
+<h2>2.4.3 Otimização quadrática, parâmetros e o custo computacional<a class="headerlink" href="#otimizacao-quadratica-parametros-e-o-custo-computacional" title="Link to this heading">#</a></h2>
 <p>O método SVM apresenta certas vantagens em relação a outros métodos, a citar, aqueles baseados na ideia do gradiente descenedente ou no ajuste de distribuições de probabilidade. Nestes exemplos, o aprendizado é sensível aos parâmetros de inicialização e pode conduzir a resultados subótimos (mínimos locais). Ao contrário, o processo de aprendizado do método SVM é realizado pela otimização de problemas quadráticos convexos, o que implica em soluções únicas e definidas explicas explicitamente.</p>
 <p>Uma fragilidade decorrente do problema de otimização associado ao SVM refere-se ao número de parcelas da função objetivo, que cresce quadraticamente em relação ao número de padrões de treinamento. Esta característica torna crítico seu aprendizado diante de grandes conjuntos de dados. Tal fato tem motivado, ao longo do anos, o desenvolvimento e aprimoramento de algoritmos capazes de otimizar o processo de aprendizado. Exemplos de algoritmos destinados a esse propósito são <span class="math notranslate nohighlight">\(\textit{Sequential Minimal Optimization}\)</span> (SMO), <span class="math notranslate nohighlight">\(SVM^{Light}\)</span>, <span class="math notranslate nohighlight">\(\textit{Chuncking}\)</span> e <span class="math notranslate nohighlight">\(LibSVM\)</span>.</p>
 <p>Outro fator que atua diretamente no custo computacional são os parâmetros adotados, sejam eles referentes à função <span class="math notranslate nohighlight">\(\mathbb{kernel}\)</span> ou à penalidade de erro (C). A adoção de parâmetros que minimizam o custo computacional pode prejudicar a capacidade de aprendizado e generalização do método, proporcionando, assim, resultado insatisfatórios.</p>
@@ -614,6 +629,7 @@ sujeito \ a:\left\{\begin{matrix} 0 \leq \lambda_{i} \leq C, i=1,...,m \\ \sum_{
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
+
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> Contents
@@ -647,7 +663,7 @@ By Vitor Jorge
 
   <p class="copyright">
     
-      © Copyright 2022.
+      © Copyright 2023.
       <br/>
     
   </p>
@@ -671,8 +687,8 @@ By Vitor Jorge
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
   </footer>
